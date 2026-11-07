@@ -205,10 +205,10 @@ export function TerminalCli() {
           type: "output",
           content: (
             <div className="space-y-1 text-xs md:text-sm font-mono text-gray-300">
-              <div>• GitHub: <a href="https://github.com/neerajm-dev" target="_blank" className="text-[#00f0ff] underline">github.com/neerajm-dev</a></div>
-              <div>• Instagram: <a href="https://instagram.com/neerajm_dev" target="_blank" className="text-[#00f0ff] underline">@neerajm_dev</a></div>
+              <div>• GitHub: <a href="https://github.com/neeraajm" target="_blank" className="text-[#00f0ff] underline">github.com/neeraajm</a></div>
+              <div>• Instagram: <a href="https://instagram.com/neeraajm" target="_blank" className="text-[#00f0ff] underline">@neeraajm</a></div>
               <div>• Email: <span className="text-[#10b981]">hi.neerajm@gmail.com</span></div>
-              <div>• Portfolio: <a href="https://neerajm.vercel.app" target="_blank" className="text-[#00f0ff] underline">neerajm.vercel.app</a></div>
+              <div>• Portfolio: <a href="https://neerajm.pages.dev" target="_blank" className="text-[#00f0ff] underline">neerajm.pages.dev</a></div>
             </div>
           ),
         };
@@ -223,7 +223,7 @@ export function TerminalCli() {
           content: (
             <div className="space-y-1 text-xs md:text-sm font-mono text-gray-300">
               <div className="text-[#00f0ff] font-bold">3D WORKSTATION & PORTFOLIO CREDITS</div>
-              <div>• Original Architecture & Design: <a href="https://github.com/neerajm-dev" target="_blank" className="text-[#10b981] font-bold underline">Neeraj M (@neerajm-dev)</a></div>
+              <div>• Original Architecture & Design: <a href="https://github.com/neeraajm" target="_blank" className="text-[#10b981] font-bold underline">Neeraj M (@neeraajm)</a></div>
               <div>• 3D Gaming Mouse: <span className="text-gray-400">jerard27 (Sketchfab • CC BY 4.0)</span></div>
               <div>• 3D Smartphone: <span className="text-gray-400">Alain Sorazu (Sketchfab • CC BY-SA 4.0)</span></div>
               <div>• 3D Digital Watch: <span className="text-gray-400">SpatialNeglect / Mateusz Woliński (Sketchfab • CC BY 4.0)</span></div>
@@ -242,7 +242,7 @@ export function TerminalCli() {
             <div className="space-y-1 text-xs md:text-sm font-mono text-gray-300">
               <div className="text-[#00f0ff] font-bold">OPEN SOURCE LICENSE & BRAND PROTECTION</div>
               <div>• License Type: <span className="text-white font-bold">MIT with Non-Commercial & Brand Protection Clause</span></div>
-              <div>• Mandatory UI Attribution: Any public web deployment derived from this codebase MUST keep visible footer credit to <a href="https://github.com/neerajm-dev" target="_blank" className="text-[#10b981] underline font-bold">@neerajm-dev</a>.</div>
+              <div>• Mandatory UI Attribution: Any public web deployment derived from this codebase MUST keep visible footer credit to <a href="https://github.com/neeraajm" target="_blank" className="text-[#10b981] underline font-bold">@neeraajm</a>.</div>
               <div>• Commercial Resale: <span className="text-red-400 font-bold">Strictly prohibited</span> as a paid theme or template.</div>
             </div>
           ),

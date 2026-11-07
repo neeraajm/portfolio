@@ -63,7 +63,7 @@ export function Footer() {
             </button>
 
             <a
-              href="https://github.com/neerajm-dev"
+              href="https://github.com/neeraajm"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => sound.playClick()}
@@ -74,7 +74,7 @@ export function Footer() {
             </a>
 
             <a
-              href="https://instagram.com/neerajm_dev"
+              href="https://instagram.com/neeraajm"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => sound.playClick()}
@@ -100,12 +100,12 @@ export function Footer() {
           <span>
             Original 3D Workstation Architecture by{" "}
             <a
-              href="https://github.com/neerajm-dev"
+              href="https://github.com/neeraajm"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-[#00f0ff] font-semibold underline underline-offset-2 transition-colors"
             >
-              Neeraj M (@neerajm-dev)
+              Neeraj M (@neeraajm)
             </a>
           </span>
         </div>

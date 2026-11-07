@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, JetBrains_Mono, Inter } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { DEVELOPER_PROFILE } from "@/lib/constants";
 import "./globals.css";
 
@@ -32,7 +30,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://neerajm.vercel.app"),
+  metadataBase: new URL("https://neerajm.pages.dev"),
   title: "Neeraj M // Solo Builder & Systems Engineer",
   description:
     `Personal developer portfolio of Neeraj M (${DEVELOPER_PROFILE.age}yo Solo Builder & Systems Engineer). Creator of KTCC Platform, Next.js 15, Android Hybrid Engines, and $0 Cloud Infrastructure.`,
@@ -49,13 +47,13 @@ export const metadata: Metadata = {
     "Portfolio",
     "Kerala Developer",
   ],
-  authors: [{ name: "Neeraj M", url: "https://neerajm.vercel.app" }],
+  authors: [{ name: "Neeraj M", url: "https://neerajm.pages.dev" }],
   creator: "Neeraj M",
   openGraph: {
     title: "Neeraj M // Solo Builder & Systems Engineer",
     description:
       "Architecting Production Platforms from Scratch. Full-Stack Android & Cloud Platforms with $0 Infrastructure.",
-    url: "https://neerajm.vercel.app",
+    url: "https://neerajm.pages.dev",
     siteName: "Neeraj M Portfolio",
     images: [
       {
@@ -73,7 +71,7 @@ export const metadata: Metadata = {
     title: "Neeraj M // Solo Builder & Systems Engineer",
     description:
       "Building Production Platforms from Scratch. $0 Cloud Infrastructure Specialist.",
-    creator: "@neerajm_dev",
+    creator: "@neeraajm",
     images: ["/avatar-neeraj.png"],
   },
   icons: {
@@ -92,8 +90,6 @@ export default function RootLayout({
         className={`${outfit.variable} ${jetbrainsMono.variable} ${inter.variable} antialiased bg-[#05070a] text-white font-sans`}
       >
         {children}
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );

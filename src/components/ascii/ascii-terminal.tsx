@@ -128,8 +128,8 @@ export function AsciiTerminal() {
           type: "output",
           content: (
             <div className="space-y-1 text-xs">
-              <div>• GitHub: <a href="https://github.com/neerajm-dev" target="_blank" className="underline font-bold">github.com/neerajm-dev</a></div>
-              <div>• Instagram: <a href="https://instagram.com/neerajm_dev" target="_blank" className="underline font-bold">@neerajm_dev</a></div>
+              <div>• GitHub: <a href="https://github.com/neeraajm" target="_blank" className="underline font-bold">github.com/neeraajm</a></div>
+              <div>• Instagram: <a href="https://instagram.com/neeraajm" target="_blank" className="underline font-bold">@neeraajm</a></div>
               <div>• Email: <span className="font-bold">hi.neerajm@gmail.com</span></div>
             </div>
           ),

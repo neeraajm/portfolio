@@ -414,7 +414,7 @@ export function AsciiIdCard({
 
                 <div className="flex justify-between items-center">
                   <a
-                    href="https://github.com/neerajm-dev/broto-raise"
+                    href="https://github.com/neeraajm/broto-raise"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
@@ -467,26 +467,26 @@ export function AsciiIdCard({
                 <div className="text-[8.5px] font-bold uppercase" style={{ color: `${themeHex}80` }}>
                   03 — CONNECT
                 </div>
-                <div>• GITHUB: <a href="https://github.com/neerajm-dev" target="_blank" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="font-bold underline">@neerajm-dev</a></div>
-                <div>• INSTA: <a href="https://instagram.com/neerajm_dev" target="_blank" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="font-bold underline">@neerajm_dev</a></div>
+                <div>• GITHUB: <a href="https://github.com/neeraajm" target="_blank" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="font-bold underline">@neeraajm</a></div>
+                <div>• INSTA: <a href="https://instagram.com/neeraajm" target="_blank" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()} className="font-bold underline">@neeraajm</a></div>
                 <div>• EMAIL: <span className="font-bold">hi.neerajm@gmail.com</span></div>
               </div>
 
               {/* Scannable Vector QR Code Box */}
               <a
-                href="https://neerajm.vercel.app"
+                href="https://neerajm.pages.dev"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 onPointerDown={(e) => e.stopPropagation()}
-                title="Scan or visit neerajm.vercel.app"
+                title="Scan or visit neerajm.pages.dev"
                 className="border p-1 bg-black shrink-0 rounded-[4px] transition-all flex items-center justify-center cursor-pointer"
                 style={{
                   borderColor: themeHex,
                   boxShadow: `0 0 10px ${themeHex}40`,
                 }}
               >
-                <QrCode value="https://neerajm.vercel.app" size={54} fgColor={themeHex} centerLogo={true} />
+                <QrCode value="https://neerajm.pages.dev" size={54} fgColor={themeHex} centerLogo={true} />
               </a>
             </div>
           </div>

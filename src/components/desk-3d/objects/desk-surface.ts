@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { DEFAULT_THEME } from "@/lib/theme-colors";
 
 export function createDeskSurface(): THREE.Group {
   const group = new THREE.Group();
@@ -51,7 +52,7 @@ export function createDeskSurface(): THREE.Group {
   // Tabletop Edge Glow & Facet Highlighting
   const tableEdges = new THREE.EdgesGeometry(tableGeo, 15);
   const tableLineMat = new THREE.LineBasicMaterial({
-    color: 0x00ff66,
+    color: DEFAULT_THEME.threeColor,
     transparent: true,
     opacity: 0.4,
   });
@@ -107,7 +108,7 @@ export function createDeskSurface(): THREE.Group {
   // Pad Border Wireframe
   const padEdges = new THREE.EdgesGeometry(padGeo, 15);
   const padLineMat = new THREE.LineBasicMaterial({
-    color: 0x00ff66,
+    color: DEFAULT_THEME.threeColor,
     transparent: true,
     opacity: 0.75,
   });
@@ -135,7 +136,7 @@ export function createDeskSurface(): THREE.Group {
   const gridGeo = new THREE.BufferGeometry();
   gridGeo.setAttribute("position", new THREE.Float32BufferAttribute(gridPositions, 3));
   const gridMat = new THREE.LineBasicMaterial({
-    color: 0x00ff66,
+    color: DEFAULT_THEME.threeColor,
     transparent: true,
     opacity: 0.16,
   });
@@ -151,7 +152,7 @@ export function createDeskSurface(): THREE.Group {
   });
 
   const legWireMat = new THREE.LineBasicMaterial({
-    color: 0x00ff66,
+    color: DEFAULT_THEME.threeColor,
     transparent: true,
     opacity: 0.4,
   });

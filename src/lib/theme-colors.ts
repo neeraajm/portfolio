@@ -7,9 +7,9 @@ export interface WorkstationTheme {
 }
 
 export const WORKSTATION_THEMES: WorkstationTheme[] = [
+  { id: "white", name: "Pure White", hex: "#ffffff", rgb: [255, 255, 255], threeColor: 0xffffff },
   { id: "green", name: "Matrix Green", hex: "#00ff66", rgb: [0, 255, 102], threeColor: 0x00ff66 },
   { id: "cyan", name: "Cyber Cyan", hex: "#00f0ff", rgb: [0, 240, 255], threeColor: 0x00f0ff },
-  { id: "white", name: "Pure White", hex: "#ffffff", rgb: [255, 255, 255], threeColor: 0xffffff },
   { id: "amber", name: "Solar Amber", hex: "#f59e0b", rgb: [245, 158, 11], threeColor: 0xf59e0b },
   { id: "purple", name: "Synthwave Purple", hex: "#c084fc", rgb: [192, 132, 252], threeColor: 0xc084fc },
   { id: "red", name: "Tokyo Red", hex: "#ff0055", rgb: [255, 0, 85], threeColor: 0xff0055 },

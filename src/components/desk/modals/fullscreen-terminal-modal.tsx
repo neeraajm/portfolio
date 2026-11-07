@@ -127,7 +127,7 @@ export function FullscreenTerminalModal({ onClose }: FullscreenTerminalModalProp
             <div className="space-y-1 text-xs sm:text-sm text-[#00ff66]/90">
               <div className="text-[#00ff66] font-bold">BROTORAISE // COMPLAINT MANAGEMENT SYSTEM</div>
               <div>• Issue escalation and resolution lifecycle engine</div>
-              <div>• Repo: <a href="https://github.com/neerajm-dev/broto-raise" target="_blank" rel="noopener noreferrer" className="underline font-bold">github.com/neerajm-dev/broto-raise</a></div>
+              <div>• Repo: <a href="https://github.com/neeraajm/broto-raise" target="_blank" rel="noopener noreferrer" className="underline font-bold">github.com/neeraajm/broto-raise</a></div>
               <div>• Engineered with Next.js &amp; PostgreSQL</div>
             </div>
           ),
@@ -174,8 +174,8 @@ export function FullscreenTerminalModal({ onClose }: FullscreenTerminalModalProp
           content: (
             <div className="space-y-1 text-xs sm:text-sm text-[#00ff66]/90">
               <div className="text-[#00ff66] font-bold">CONNECT WITH NEERAJ M:</div>
-              <div>• Instagram: <a href="https://instagram.com/neerajm_dev" target="_blank" rel="noopener noreferrer" className="underline font-bold">@neerajm_dev</a></div>
-              <div>• GitHub: <a href="https://github.com/neerajm-dev" target="_blank" rel="noopener noreferrer" className="underline font-bold">@neerajm-dev</a></div>
+              <div>• Instagram: <a href="https://instagram.com/neeraajm" target="_blank" rel="noopener noreferrer" className="underline font-bold">@neeraajm</a></div>
+              <div>• GitHub: <a href="https://github.com/neeraajm" target="_blank" rel="noopener noreferrer" className="underline font-bold">@neeraajm</a></div>
               <div>• Email: <a href="mailto:hi.neerajm@gmail.com" className="underline font-bold">hi.neerajm@gmail.com</a></div>
             </div>
           ),

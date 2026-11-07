@@ -21,11 +21,11 @@ When in doubt, **answer first, act later** — ask if the user wants you to make
   - Full-Stack Android & Cloud Platforms Builder
   - $0 Cloud Infrastructure Specialist
 - **Socials & Links:**
-  - **Instagram:** `@neerajm_dev`
-  - **GitHub:** `neerajm-dev` / `Neeraj M`
+  - **Instagram:** `@neeraajm`
+  - **GitHub:** `neeraajm` / `Neeraj M`
   - **Email:** `hi.neerajm@gmail.com`
   - **Live Flagship:** `https://ktccofficial.vercel.app`
-  - **Portfolio Live Domain:** `https://neerajm.vercel.app` (Future custom domain: `https://neerajm.in`)
+  - **Portfolio Live Domain:** `https://neerajm.pages.dev` (Future custom domain: `https://neerajm.in`)
 - **The Challenge Origin:**
   - Built from scratch during the **Onam Vacation Build-in-Public Portfolio Challenge**.
   - Documented daily across social media as a real-time showcase of paired AI systems architecture.
@@ -59,7 +59,7 @@ When in doubt, **answer first, act later** — ask if the user wants you to make
 - **Styling:** Tailwind CSS 4 + TokyoNight custom design tokens
 - **Icons:** Lucide React (`lucide-react`)
 - **Motion & Interactions:** Framer Motion (`framer-motion`), Canvas Confetti (`canvas-confetti`)
-- **Hosting:** Vercel Hobby Free Tier (`$0/month`)
+- **Hosting:** Cloudflare Pages Free Tier (`$0/month`)
 - **Typography:**
   - `Outfit` (Display & Headings)
   - `JetBrains Mono` / `Space Mono` (Code, Telemetry, and Terminal CLI)

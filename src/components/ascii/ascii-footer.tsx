@@ -39,7 +39,7 @@ export function AsciiFooter() {
           <div className="text-[11px] text-[#00ff66]/80 font-bold">VERIFIED REPOSITORIES &amp; CHANNELS:</div>
           <div className="grid grid-cols-2 gap-2">
             <a
-              href="https://github.com/neerajm-dev"
+              href="https://github.com/neeraajm"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => sound.playClick()}
@@ -49,7 +49,7 @@ export function AsciiFooter() {
             </a>
 
             <a
-              href="https://instagram.com/neerajm_dev"
+              href="https://instagram.com/neeraajm"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => sound.playClick()}

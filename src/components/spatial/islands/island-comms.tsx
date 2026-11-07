@@ -62,7 +62,7 @@ export function IslandComms() {
 
         <div className="grid grid-cols-2 gap-2">
           <a
-            href="https://github.com/neerajm-dev"
+            href="https://github.com/neeraajm"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => sound.playClick()}
@@ -73,7 +73,7 @@ export function IslandComms() {
           </a>
 
           <a
-            href="https://instagram.com/neerajm_dev"
+            href="https://instagram.com/neeraajm"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => sound.playClick()}

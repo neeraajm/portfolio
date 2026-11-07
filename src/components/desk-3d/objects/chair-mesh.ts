@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { DEFAULT_THEME } from "@/lib/theme-colors";
 
 /**
  * Procedural Cyberpunk Ergonomic Battle-Station Chair
@@ -31,14 +32,14 @@ export function createChairMesh(): THREE.Group {
   });
 
   const wireMat = new THREE.LineBasicMaterial({
-    color: 0x00ff66,
+    color: DEFAULT_THEME.threeColor,
     transparent: true,
     opacity: 0.45,
   });
 
   const neonAccentMat = new THREE.MeshStandardMaterial({
-    color: 0x00ff66,
-    emissive: 0x00ff66,
+    color: DEFAULT_THEME.threeColor,
+    emissive: DEFAULT_THEME.threeColor,
     emissiveIntensity: 0.6,
     roughness: 0.2,
   });

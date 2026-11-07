@@ -45,14 +45,14 @@ const PILLARS: ProjectPillar[] = [
     title: "Cyberdeck Web CLI & AI Workflow",
     tagline: "In-Browser Command Execution & Autonomous Pairing System",
     description: "An embedded interactive developer workstation running directly inside the browser with custom command evaluation (`whoami`, `stack`, `matrix`, `lab`), keyboard history, synthesized Web Audio tactile feedback, and autonomous AI pair programming orchestration.",
-    tags: ["Web Audio API", "Framer Motion", "TypeScript", "Vercel Speed Insights", "ASCII Engine"],
+    tags: ["Web Audio API", "Framer Motion", "TypeScript", "Cloudflare Pages", "ASCII Engine"],
     metrics: [
       { label: "SFX LATENCY", value: "0ms NATIVE" },
       { label: "INTERACTIONS", value: "8+ COMMANDS" },
       { label: "AUDIO WEIGHT", value: "0 KB ASSETS" },
     ],
     liveUrl: "#cli",
-    githubUrl: "https://github.com/neerajm-dev/portfolio",
+    githubUrl: "https://github.com/neeraajm/portfolio",
   },
   {
     number: "03",
@@ -60,8 +60,8 @@ const PILLARS: ProjectPillar[] = [
     badgeColor: "#f59e0b",
     title: "Zero-Egress $0 Cloud Infrastructure Blueprint",
     tagline: "Production Enterprise Recipes for 100% Free Tiers",
-    description: "Battle-tested cloud blueprints that eliminate ongoing SaaS fees. Combines Supabase Postgres RLS, Cloudflare R2 APAC buckets, Vercel Edge compute, and GitHub Actions release pipelines to run high-traffic applications permanently at $0.00 cloud cost.",
-    tags: ["Cloudflare R2", "Supabase RLS", "GitHub Actions", "Vercel Edge", "PostgreSQL"],
+    description: "Battle-tested cloud blueprints that eliminate ongoing SaaS fees. Combines Supabase Postgres RLS, Cloudflare R2 APAC buckets, Cloudflare Pages Anycast edge, and GitHub Actions release pipelines to run high-traffic applications permanently at $0.00 cloud cost.",
+    tags: ["Cloudflare R2", "Supabase RLS", "GitHub Actions", "Cloudflare Pages", "PostgreSQL"],
     metrics: [
       { label: "EGRESS FEES", value: "$0 PERMANENT" },
       { label: "UPTIME", value: "99.99% EDGE" },

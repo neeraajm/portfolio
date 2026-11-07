@@ -6,7 +6,7 @@ interface CustomCursorProps {
   themeHex?: string;
 }
 
-export function CustomCursor({ themeHex = "#00ff66" }: CustomCursorProps) {
+export function CustomCursor({ themeHex = "#ffffff" }: CustomCursorProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isDown, setIsDown] = useState(false);

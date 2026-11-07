@@ -90,24 +90,24 @@ export function Navbar() {
 
           {/* GitHub Link */}
           <a
-            href="https://github.com/neerajm-dev"
+            href="https://github.com/neeraajm"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => sound.playClick()}
             className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white transition-colors"
-            title="GitHub @neerajm-dev"
+            title="GitHub @neeraajm"
           >
             <GithubIcon className="w-4 h-4" />
           </a>
 
           {/* Instagram Link */}
           <a
-            href="https://instagram.com/neerajm_dev"
+            href="https://instagram.com/neeraajm"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => sound.playClick()}
             className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white transition-colors"
-            title="Instagram @neerajm_dev"
+            title="Instagram @neeraajm"
           >
             <InstagramIcon className="w-4 h-4" />
           </a>

@@ -17,7 +17,7 @@ export const DEVELOPER_AGE = calculateAge();
 
 export const DEVELOPER_PROFILE = {
   name: "Neeraj M",
-  handle: "neerajm-dev",
+  handle: "neeraajm",
   title: "Solo Builder & Systems Engineer",
   dob: DEVELOPER_DOB,
   age: DEVELOPER_AGE,
@@ -26,19 +26,19 @@ export const DEVELOPER_PROFILE = {
   status: "AVAILABLE FOR BUILDS",
   email: "hi.neerajm@gmail.com",
   socials: {
-    instagram: "https://instagram.com/neerajm_dev",
-    github: "https://github.com/neerajm-dev",
+    instagram: "https://instagram.com/neeraajm",
+    github: "https://github.com/neeraajm",
     email: "mailto:hi.neerajm@gmail.com",
     kofi: "https://ko-fi.com/neerajm",
     upi: "neerajm2k7@okaxis",
   },
   flagshipUrl: "https://ktccofficial.vercel.app",
-  portfolioUrl: "https://neerajm.vercel.app",
+  portfolioUrl: "https://neerajm.pages.dev",
   customDomain: "https://neerajm.in",
   bio: `${DEVELOPER_AGE}-year-old solo systems architect building high-velocity Android engines, real-time tournament backends, and full-stack cloud platforms engineered with zero ongoing infrastructure expenses ($0.00/mo).`,
   stats: [
     { label: "Cloud Infra Cost", value: "$0.00/mo", sub: "100% Free Tiers Forever" },
-    { label: "APAC P99 Latency", value: "< 18ms", sub: "Cloudflare Edge + Vercel" },
+    { label: "APAC P99 Latency", value: "< 18ms", sub: "Cloudflare Anycast Edge" },
     { label: "Ledger Consistency", value: "100%", sub: "Double-Entry ACID SQL" },
     { label: "Tournaments Managed", value: "50+", sub: "Car Parking Multiplayer" },
   ],
@@ -54,7 +54,7 @@ export const FLAGSHIP_PROJECT: Project = {
   status: "LIVE PRODUCTION",
   badge: "FLAGSHIP SHOWCASE",
   liveUrl: "https://ktccofficial.vercel.app",
-  repoUrl: "https://github.com/neerajm-dev",
+  repoUrl: "https://github.com/neeraajm",
   metrics: [
     { label: "Infrastructure Cost", value: "$0.00/month", highlight: true },
     { label: "Data Integrity", value: "Double-Entry Ledger" },
@@ -85,7 +85,7 @@ export const ZERO_DOLLAR_STACK: StackCategory[] = [
     description: "Global CDN edge deployment with zero warm-up cold starts",
     iconName: "Globe",
     items: [
-      { name: "Vercel Hobby", role: "Next.js 15 Edge Hosting", tier: "Hobby Free", cost: "$0.00", badge: "Live" },
+      { name: "Cloudflare Pages", role: "Global Edge Hosting & Anycast CDN", tier: "Free Tier (Unlimited)", cost: "$0.00", badge: "Edge" },
       { name: "Turbopack / React 19", role: "Zero-Latency Client Hydration", tier: "Open Source", cost: "$0.00" },
       { name: "Tailwind CSS 4", role: "High-Performance Style Engine", tier: "Open Source", cost: "$0.00" },
     ],
@@ -113,15 +113,15 @@ export const ZERO_DOLLAR_STACK: StackCategory[] = [
 export const SOCIAL_LINKS: SocialLink[] = [
   {
     name: "Instagram",
-    handle: "@neerajm_dev",
-    url: "https://instagram.com/neerajm_dev",
+    handle: "@neeraajm",
+    url: "https://instagram.com/neeraajm",
     icon: "Instagram",
     badge: "Daily Updates",
   },
   {
     name: "GitHub",
-    handle: "neerajm-dev",
-    url: "https://github.com/neerajm-dev",
+    handle: "neeraajm",
+    url: "https://github.com/neeraajm",
     icon: "Github",
     badge: "Open Source",
   },
@@ -190,8 +190,8 @@ Key Feat:   • Double-entry ledger prevents points race conditions
 
   socials: `CONNECT WITH NEERAJ M:
 ------------------------------------------------------
-• Instagram:  https://instagram.com/neerajm_dev  (@neerajm_dev)
-• GitHub:     https://github.com/neerajm-dev     (neerajm-dev / Neeraj M)
+• Instagram:  https://instagram.com/neeraajm  (@neeraajm)
+• GitHub:     https://github.com/neeraajm     (neeraajm / Neeraj M)
 • Ko-fi:      https://ko-fi.com/neerajm
 • UPI:        neerajm2k7@okaxis
 • Email:      hi.neerajm@gmail.com

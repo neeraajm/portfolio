@@ -235,11 +235,11 @@ export function SceneCanvas({
     dirLight.position.set(6, 11, 7);
     scene.add(dirLight);
 
-    const rimLight = new THREE.DirectionalLight(0x00ff66, 1.3);
+    const rimLight = new THREE.DirectionalLight(theme.threeColor, 1.3);
     rimLight.position.set(-6, 8, -7);
     scene.add(rimLight);
 
-    const screenLight = new THREE.PointLight(0x00ff66, 1.5, 8);
+    const screenLight = new THREE.PointLight(theme.threeColor, 1.5, 8);
     screenLight.position.set(0, 2.0, 0.4);
     scene.add(screenLight);
 
@@ -259,7 +259,7 @@ export function SceneCanvas({
 
     // Infinite Cyberpunk Neon Floor Grid (Elevated cleanly 10cm above ground plane)
     const floorGridDivisions = 190;
-    const floorGrid = new THREE.GridHelper(380, floorGridDivisions, 0x00ff66, 0x00280f);
+    const floorGrid = new THREE.GridHelper(380, floorGridDivisions, theme.threeColor, 0x222222);
     floorGrid.position.set(0, -5.38, 0);
     if (Array.isArray(floorGrid.material)) {
       floorGrid.material.forEach((m) => {

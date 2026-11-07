@@ -3,12 +3,12 @@
 
 :root {
   --background: #000000;
-  --foreground: #00ff66;
+  --foreground: #ffffff;
 }
 
 body {
   background-color: #000000;
-  color: #00ff66;
+  color: #ffffff;
   font-family: var(--font-jetbrains-mono), monospace;
   overflow-x: hidden;
 }
@@ -17,7 +17,7 @@ h1, h2, h3, h4, h5, h6, pre, code, button, input, p, div, span, a {
   font-family: var(--font-jetbrains-mono), monospace;
 }
 
-/* Custom Phosphor Green Terminal Scrollbar */
+/* Custom Phosphor White Terminal Scrollbar */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -28,16 +28,16 @@ h1, h2, h3, h4, h5, h6, pre, code, button, input, p, div, span, a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #00ff66;
+  background: #ffffff;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00cc52;
+  background: #cccccc;
 }
 
-/* Phosphor Green Text Selection */
+/* Phosphor White Text Selection */
 ::selection {
-  background: #00ff66;
+  background: #ffffff;
   color: #000000;
 }
 

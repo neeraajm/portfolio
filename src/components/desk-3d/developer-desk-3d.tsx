@@ -422,10 +422,10 @@ export function DeveloperDesk3D() {
         case "credits":
         case "attribution":
         case "author":
-          responseLine = "[CREDITS] 3D Workstation Architecture by Neeraj M (@neerajm-dev) // 3D Models: Gaming Mouse (jerard27), Phone (Alain Sorazu), Watch (Mateusz Woliński), Router (SanForge Studio) [CC BY 4.0]";
+          responseLine = "[CREDITS] 3D Workstation Architecture by Neeraj M (@neeraajm) // 3D Models: Gaming Mouse (jerard27), Phone (Alain Sorazu), Watch (Mateusz Woliński), Router (SanForge Studio) [CC BY 4.0]";
           break;
         case "license":
-          responseLine = "[LICENSE] MIT License + Non-Commercial & Mandatory Visible UI Attribution Clause (@neerajm-dev)";
+          responseLine = "[LICENSE] MIT License + Non-Commercial & Mandatory Visible UI Attribution Clause (@neeraajm)";
           break;
         case "ktcc":
         case "phone":
@@ -451,10 +451,10 @@ export function DeveloperDesk3D() {
           responseLine = "[BROTORAISE] Complaint Management System // Next.js + Postgres";
           break;
         case "stack":
-          responseLine = "[STACK] Vercel Hobby + Supabase ACID + Cloudflare R2 + GitHub Actions";
+          responseLine = "[STACK] Cloudflare Pages + Supabase ACID + Cloudflare R2 + GitHub Actions";
           break;
         case "socials":
-          responseLine = "[LINKS] GitHub: neerajm-dev | IG: @neerajm_dev | Ko-fi: neerajm | Mail: hi.neerajm@gmail.com";
+          responseLine = "[LINKS] GitHub: neeraajm | IG: @neeraajm | Ko-fi: neerajm | Mail: hi.neerajm@gmail.com";
           break;
         case "reset":
         case "home":

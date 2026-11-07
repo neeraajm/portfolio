@@ -474,7 +474,7 @@ export function createLaptopMesh(): {
   group.name = "asus-tuf-f15-laptop";
 
   const wireMat = new THREE.LineBasicMaterial({
-    color: 0x00ff66,
+    color: DEFAULT_THEME.threeColor,
     transparent: true,
     opacity: 0.6,
   });
@@ -539,7 +539,7 @@ export function createLaptopMesh(): {
   const ventMat = new THREE.MeshStandardMaterial({
     color: 0x000301,
     roughness: 0.9,
-    emissive: 0x00ff66,
+    emissive: DEFAULT_THEME.threeColor,
     emissiveIntensity: 0.15,
   });
 
@@ -565,8 +565,8 @@ export function createLaptopMesh(): {
   });
 
   const portAccentMat = new THREE.MeshStandardMaterial({
-    color: 0x00ff66,
-    emissive: 0x00ff66,
+    color: DEFAULT_THEME.threeColor,
+    emissive: DEFAULT_THEME.threeColor,
     emissiveIntensity: 0.45,
     roughness: 0.25,
   });
@@ -658,12 +658,12 @@ export function createLaptopMesh(): {
   const ventSlotMat = new THREE.MeshStandardMaterial({
     color: 0x000301,
     roughness: 0.95,
-    emissive: 0x00ff66,
+    emissive: DEFAULT_THEME.threeColor,
     emissiveIntensity: 0.18,
   });
 
   const ventSlotEdges = new THREE.EdgesGeometry(ventSlotGeo);
-  const ventSlotWireMat = new THREE.LineBasicMaterial({ color: 0x00ff66, transparent: true, opacity: 0.4 });
+  const ventSlotWireMat = new THREE.LineBasicMaterial({ color: DEFAULT_THEME.threeColor, transparent: true, opacity: 0.4 });
 
   // 2 horizontal rows x 8 columns = 16 distinct side exhaust vents
   for (let row = 0; row < 2; row++) {
@@ -758,7 +758,7 @@ export function createLaptopMesh(): {
 
   // 24 Diagonal Slanted Intake Vents Above Keyboard Deck (Callout 6)
   const slitMat = new THREE.LineBasicMaterial({
-    color: 0x00ff66,
+    color: DEFAULT_THEME.threeColor,
     transparent: true,
     opacity: 0.55,
   });

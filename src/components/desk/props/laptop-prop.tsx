@@ -122,7 +122,7 @@ export function LaptopProp({ onExpand }: LaptopPropProps) {
             <div className="space-y-0.5 text-[9.5px] sm:text-[10.5px] text-[#00ff66]/90">
               <div className="text-[#00ff66] font-bold">BROTORAISE // COMPLAINT MANAGEMENT SYSTEM</div>
               <div>• Type: Full-Stack Issue Resolution &amp; Escalation Engine</div>
-              <div>• Repo: <a href="https://github.com/neerajm-dev/broto-raise" target="_blank" rel="noopener noreferrer" className="underline font-bold">github.com/neerajm-dev/broto-raise</a></div>
+              <div>• Repo: <a href="https://github.com/neeraajm/broto-raise" target="_blank" rel="noopener noreferrer" className="underline font-bold">github.com/neeraajm/broto-raise</a></div>
               <div>• Architecture: Next.js + PostgreSQL ticket lifecycle management</div>
             </div>
           ),
@@ -169,8 +169,8 @@ export function LaptopProp({ onExpand }: LaptopPropProps) {
           content: (
             <div className="space-y-0.5 text-[9.5px] sm:text-[10.5px] text-[#00ff66]/90">
               <div className="text-[#00ff66] font-bold">DEVELOPER SOCIALS:</div>
-              <div>• GitHub: <a href="https://github.com/neerajm-dev" target="_blank" rel="noopener noreferrer" className="underline font-bold">@neerajm-dev</a></div>
-              <div>• Instagram: <a href="https://instagram.com/neerajm_dev" target="_blank" rel="noopener noreferrer" className="underline font-bold">@neerajm_dev</a></div>
+              <div>• GitHub: <a href="https://github.com/neeraajm" target="_blank" rel="noopener noreferrer" className="underline font-bold">@neeraajm</a></div>
+              <div>• Instagram: <a href="https://instagram.com/neeraajm" target="_blank" rel="noopener noreferrer" className="underline font-bold">@neeraajm</a></div>
               <div>• Email: <a href="mailto:hi.neerajm@gmail.com" className="underline font-bold">hi.neerajm@gmail.com</a></div>
             </div>
           ),

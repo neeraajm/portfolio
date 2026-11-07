@@ -12,7 +12,7 @@
 
 An interactive 3D spatial developer environment and terminal built with Next.js, Three.js, and WebGL.
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-neerajm.vercel.app-00ff66?style=for-the-badge&logo=vercel&logoColor=black)](https://neerajm.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-neerajm.pages.dev-F38020?style=for-the-badge&logo=cloudflarepages&logoColor=white)](https://neerajm.pages.dev)
 [![Next.js](https://img.shields.io/badge/Next.js_16-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
 [![Three.js](https://img.shields.io/badge/Three.js-black?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org)
 [![React](https://img.shields.io/badge/React_19-black?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
@@ -26,7 +26,7 @@ An interactive 3D spatial developer environment and terminal built with Next.js,
 
 ## Overview
 
-This repository contains the source code for [neerajm.vercel.app](https://neerajm.vercel.app), an interactive 3D spatial developer portfolio. Built with Next.js 16 and Three.js, the application presents a navigable 3D developer desk environment in place of a traditional flat scroll layout.
+This repository contains the source code for [neerajm.pages.dev](https://neerajm.pages.dev), an interactive 3D spatial developer portfolio. Built with Next.js 16 and Three.js, the application presents a navigable 3D developer desk environment in place of a traditional flat scroll layout.
 
 Visitors can orbit around the scene, inspect detailed 3D hardware components and desk peripherals, execute commands in an operable in-browser terminal, switch phosphor theme palettes in real time, and review featured software projects via an interactive ID card.
 
@@ -104,7 +104,7 @@ Ensure you have the following installed locally:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/neerajm-dev/portfolio.git
+   git clone https://github.com/neeraajm/portfolio.git
    cd portfolio
    ```
 
@@ -136,7 +136,7 @@ npm run start
 This project is licensed under a custom **MIT License with Non-Commercial & Mandatory Public UI Attribution Clauses**.
 
 - **Educational & Personal Use:** You are welcome to inspect, study, and fork the code for non-commercial educational purposes.
-- **Attribution:** Any public deployment utilizing this 3D workstation architecture must retain a visible, clickable attribution link to [@neerajm-dev](https://github.com/neerajm-dev).
+- **Attribution:** Any public deployment utilizing this 3D workstation architecture must retain a visible, clickable attribution link to [@neeraajm](https://github.com/neeraajm).
 - **Brand Protection:** Personal branding assets (including `avatar-neeraj.png`, personal credentials, and identity copy) are strictly reserved.
 
 Refer to [`LICENSE`](LICENSE) for full terms.
@@ -160,7 +160,7 @@ The following 3D assets used in the scene are licensed under Creative Commons At
 
 **Neeraj M**  
 Full-Stack & Systems Developer  
-- Website: [neerajm.vercel.app](https://neerajm.vercel.app)  
-- GitHub: [@neerajm-dev](https://github.com/neerajm-dev)  
+- Website: [neerajm.pages.dev](https://neerajm.pages.dev)  
+- GitHub: [@neeraajm](https://github.com/neeraajm)  
 - Email: [hi.neerajm@gmail.com](mailto:hi.neerajm@gmail.com)  
-- Instagram: [@neerajm_dev](https://instagram.com/neerajm_dev)
+- Instagram: [@neeraajm](https://instagram.com/neeraajm)

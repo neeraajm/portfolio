@@ -35,7 +35,7 @@ interface QrRenderResult {
 export function QrCode({
   value,
   size = 140,
-  fgColor = "#00ff66",
+  fgColor = "#ffffff",
   bgColor = "transparent",
   margin = 1,
   centerLogo = false,

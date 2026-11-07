@@ -314,8 +314,8 @@ export function createIdCardMesh(): {
 
     bctx.fillStyle = themeHex;
     bctx.font = "15px monospace";
-    bctx.fillText("• GITHUB: @neerajm-dev", 36, 328);
-    bctx.fillText("• INSTA:  @neerajm_dev", 36, 352);
+    bctx.fillText("• GITHUB: @neeraajm", 36, 328);
+    bctx.fillText("• INSTA:  @neeraajm", 36, 352);
     bctx.fillText("• EMAIL:  hi.neerajm@gmail.com", 36, 376);
 
     // QR Code Box (Right Side)
