@@ -72,13 +72,6 @@ export function CustomCursor({ themeHex = "#ffffff" }: CustomCursorProps) {
       prevMouseY = e.clientY;
       mousePos.current = { x: e.clientX, y: e.clientY };
 
-      // Instant 0ms latency update for the unified cursor container
-      if (cursorContainerRef.current) {
-        const velScale = 1.0 + velocity.current * 0.012;
-        const baseScale = isDownRef.current ? 0.85 : isHoveredRef.current ? 1.25 : 1.0;
-        cursorContainerRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) scale(${baseScale * velScale})`;
-      }
-
       checkHoverState(e);
 
       // Check for dragging movement when pointer is down
@@ -131,27 +124,39 @@ export function CustomCursor({ themeHex = "#ffffff" }: CustomCursorProps) {
       const is3d = document.documentElement.getAttribute("data-cursor-hover") === "true";
       const hidden = document.documentElement.getAttribute("data-cursor-hidden") === "true";
       setIsHidden(hidden);
-      setIsHovered((prev) => {
-        const isHtml = Boolean(
-          document.querySelector(':hover:is(button, a, input, textarea, select, [role="button"], .cursor-pointer)')
-        );
-        return is3d || isHtml;
-      });
+      setIsHovered(is3d);
     });
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["data-cursor-hover", "data-cursor-hidden"],
     });
 
-    // Velocity decay loop
+    // Velocity decay loop — only touch the DOM when the visual transform
+    // actually changes, instead of writing a new style string every frame.
+    let lastCursorX = Number.NaN;
+    let lastCursorY = Number.NaN;
+    let lastCursorScale = Number.NaN;
+
     const animate = () => {
       rafId = requestAnimationFrame(animate);
       velocity.current *= 0.85;
+      if (velocity.current < 0.01) velocity.current = 0;
 
-      if (cursorContainerRef.current) {
-        const velScale = 1.0 + velocity.current * 0.012;
-        const baseScale = isDownRef.current ? 0.85 : isHoveredRef.current ? 1.25 : 1.0;
-        cursorContainerRef.current.style.transform = `translate3d(${mousePos.current.x}px, ${mousePos.current.y}px, 0) scale(${baseScale * velScale})`;
+      const velScale = 1.0 + velocity.current * 0.012;
+      const baseScale = isDownRef.current ? 0.85 : isHoveredRef.current ? 1.25 : 1.0;
+      const scale = baseScale * velScale;
+      const { x, y } = mousePos.current;
+
+      if (
+        cursorContainerRef.current &&
+        (x !== lastCursorX ||
+          y !== lastCursorY ||
+          Math.abs(scale - lastCursorScale) > 0.002)
+      ) {
+        lastCursorX = x;
+        lastCursorY = y;
+        lastCursorScale = scale;
+        cursorContainerRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
       }
     };
 

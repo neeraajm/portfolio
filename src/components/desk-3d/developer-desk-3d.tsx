@@ -87,29 +87,35 @@ function LiveClock({ themeHex }: { themeHex: string }) {
   const [date, setDate] = useState("");
 
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString("en-US", {
-        timeZone: "Asia/Kolkata",
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-      const ms = String(now.getMilliseconds()).padStart(3, "0");
-      setTime(`${timeStr}.${ms}`);
+    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    const timeRef = { current: "" };
+    const dateRef = { current: "" };
 
-      setDate(
-        now.toLocaleDateString("en-GB", {
-          timeZone: "Asia/Kolkata",
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }).toUpperCase()
-      );
+    const updateTime = () => {
+      // Manual IST (UTC+5:30) avoids the expensive Intl/timezone lookup.
+      const ist = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
+      const hh = String(ist.getUTCHours()).padStart(2, "0");
+      const mm = String(ist.getUTCMinutes()).padStart(2, "0");
+      const ss = String(ist.getUTCSeconds()).padStart(2, "0");
+      const ms = String(ist.getUTCMilliseconds()).padStart(3, "0");
+      const nextTime = `${hh}:${mm}:${ss}.${ms}`;
+      if (nextTime !== timeRef.current) {
+        timeRef.current = nextTime;
+        setTime(nextTime);
+      }
+
+      const nextDate = `${String(ist.getUTCDate()).padStart(2, "0")} ${
+        months[ist.getUTCMonth()]
+      } ${ist.getUTCFullYear()}`;
+      if (nextDate !== dateRef.current) {
+        dateRef.current = nextDate;
+        setDate(nextDate);
+      }
     };
     updateTime();
-    const interval = setInterval(updateTime, 40);
+    // 10 Hz is plenty for a tenth-of-a-second telemetry readout and avoids
+    // running Intl formatting plus a React commit on every 40 ms tick.
+    const interval = setInterval(updateTime, 100);
     return () => clearInterval(interval);
   }, []);
 
@@ -1096,12 +1102,11 @@ export function DeveloperDesk3D() {
       <motion.div
         initial={{ filter: "blur(20px)", scale: 0.98, opacity: 0.6 }}
         animate={{
-          filter: isSceneReady
-            ? isBlurred
-              ? "blur(0px) brightness(0.75)"
-              : "blur(0px) brightness(1)"
-            : "blur(20px) brightness(0.8)",
-          scale: isSceneReady ? (isBlurred ? 0.995 : 1) : 0.98,
+          // Apply the filter only during the entrance transition. A permanent
+          // (even zero-radius) blur/brightness filter forces the browser to
+          // composite the whole WebGL canvas through an offscreen pass.
+          filter: isSceneReady ? "none" : "blur(20px) brightness(0.8)",
+          scale: isSceneReady ? 1 : 0.98,
           opacity: 1,
         }}
         transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
@@ -1190,7 +1195,7 @@ export function DeveloperDesk3D() {
             transition={{ duration: 0.2 }}
             onClick={closeModal}
             className={`fixed inset-0 z-50 ${
-              activeModal === "phone" ? "bg-black/25 backdrop-blur-[0.5px]" : "bg-black/60"
+              activeModal === "phone" ? "bg-black/25" : "bg-black/60"
             } flex flex-col items-center justify-center p-3 sm:p-6`}
           >
             {/* Selected Modal */}
