@@ -203,11 +203,7 @@ export function SceneCanvas({
     let renderer: THREE.WebGLRenderer | null = null;
     try {
       renderer = new THREE.WebGLRenderer({
-        // MSAA is the single most expensive thing on integrated GPUs here.
-        // The scene is line-heavy and already uses dense geometry; dropping
-        // hardware AA roughly +45% frame throughput while adaptive DPR keeps
-        // the image clean when there is headroom.
-        antialias: false,
+        antialias: true,
         powerPreference: "high-performance",
         precision: "highp",
         depth: true,
@@ -219,7 +215,7 @@ export function SceneCanvas({
     }
 
     renderer.setSize(initialWidth, initialHeight, false);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.0));
     renderer.shadowMap.enabled = false;
     renderer.info.autoReset = true;
     renderer.domElement.style.width = "100%";
@@ -811,17 +807,17 @@ export function SceneCanvas({
     // Adaptive render resolution: trades pixel density for frame headroom,
     // never scene detail. Only adapts while the tab is focused so background
     // rAF throttling is not mistaken for a slow scene.
-    const baseDpr = Math.min(window.devicePixelRatio || 1, 1.25);
-    const maxDpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const minDpr = 0.6;
+    const baseDpr = Math.min(window.devicePixelRatio || 1, 2.0);
+    const maxDpr = Math.min(window.devicePixelRatio || 1, 2.0);
+    const minDpr = 1.0;
     let currentDpr = baseDpr;
     let renderCostEma = 0;
     let lastDprCheck = performance.now();
     let lastDprChange = performance.now();
-    // Give the GPU a full 120 Hz frame budget (8.3 ms) before sacrificing
-    // resolution; only step down when the render itself is the bottleneck.
-    const dprLowerThresholdMs = 7.5;
-    const dprRaiseThresholdMs = 4.0;
+    // Only step down if the CPU/GPU is genuinely suffocating (> 15 ms, i.e. drops below 60fps)
+    // Never downscale on high-refresh (120/144/240Hz) monitors where frame budget is naturally short.
+    const dprLowerThresholdMs = 15.0;
+    const dprRaiseThresholdMs = 7.0;
 
     const animate = (now: number) => {
       animationFrameId = requestAnimationFrame(animate);
@@ -889,19 +885,13 @@ export function SceneCanvas({
           renderCostEma === 0 ? renderCost : renderCostEma * 0.95 + renderCost * 0.05;
 
         if (
-          now - lastDprCheck > 2500 &&
+          now - lastDprCheck > 3000 &&
           document.visibilityState === "visible" &&
           document.hasFocus()
         ) {
           lastDprCheck = now;
           if (renderCostEma > dprLowerThresholdMs && currentDpr > minDpr) {
-            // Scale straight to the estimated budget instead of stepping down
-            // one notch at a time (a 15 ms render lands near 0.7x immediately).
-            const budgetScale = Math.sqrt(7 / renderCostEma);
-            currentDpr = Math.max(
-              minDpr,
-              Math.min(currentDpr, Math.round(currentDpr * budgetScale * 20) / 20)
-            );
+            currentDpr = Math.max(minDpr, Number((currentDpr - 0.25).toFixed(2)));
             renderer.setPixelRatio(currentDpr);
             renderCostEma = 0;
             lastDprChange = now;
@@ -910,7 +900,7 @@ export function SceneCanvas({
             currentDpr < maxDpr &&
             now - lastDprChange > 6000
           ) {
-            currentDpr = Math.min(maxDpr, currentDpr + 0.25);
+            currentDpr = Math.min(maxDpr, Number((currentDpr + 0.25).toFixed(2)));
             renderer.setPixelRatio(currentDpr);
             renderCostEma = 0;
             lastDprChange = now;
