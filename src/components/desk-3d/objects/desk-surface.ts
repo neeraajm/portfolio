@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { DEFAULT_THEME } from "@/lib/theme-colors";
+import { mergeStaticMeshes } from "../utils/merge-static";
 
 export function createDeskSurface(): THREE.Group {
   const group = new THREE.Group();
@@ -206,6 +207,8 @@ export function createDeskSurface(): THREE.Group {
   const rearSpineWire = new THREE.LineSegments(new THREE.EdgesGeometry(rearSpineGeo), legWireMat);
   rearSpineWire.position.set(0, -2.2, -4.2);
   group.add(rearSpineWire);
+
+  mergeStaticMeshes(group, { name: "desk" });
 
   return group;
 }

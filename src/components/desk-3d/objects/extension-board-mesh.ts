@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { WorkstationTheme, DEFAULT_THEME } from "@/lib/theme-colors";
 import { sound } from "@/lib/sound";
+import { mergeStaticMeshes } from "../utils/merge-static";
 
 /**
  * 3D Cyber Battlestation 4-Socket Heavy-Duty Surge Protector & ASUS TUF 180W Power Delivery System
@@ -957,8 +958,21 @@ export function createExtensionBoardMesh(): {
     opacity: 0.30,
   });
   wireMaterials.push(mainsWireMat);
-  const mainsWire = new THREE.LineSegments(new THREE.EdgesGeometry(mainsGeo, 24), mainsWireMat);
+  const mainsWire = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(
+      mainsCurve.getPoints(260).map((p) => p.clone().setY(p.y + 0.030))
+    ),
+    mainsWireMat
+  );
   worldCablesGroup.add(mainsWire);
+
+  // Collapse the static chassis and cable assemblies into one draw call per
+  // material. The rocker is animated, so it keeps its own mesh/transform.
+  mergeStaticMeshes(boardChassisGroup, {
+    exclude: new Set<THREE.Object3D>([switchRocker]),
+    name: "chassis",
+  });
+  mergeStaticMeshes(worldCablesGroup, { name: "cables" });
 
   // 9. UPDATE & THEME LOGIC
   let time = 0;

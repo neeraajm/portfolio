@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { DEFAULT_THEME } from "@/lib/theme-colors";
+import { mergeStaticMeshes } from "../utils/merge-static";
 
 /**
  * Procedural Cyberpunk Ergonomic Battle-Station Chair
@@ -293,6 +294,10 @@ export function createChairMesh(): THREE.Group {
   const armPadRWire = new THREE.LineSegments(new THREE.EdgesGeometry(armPadGeo), wireMat);
   armPadRWire.position.set(1.32, -1.05, -0.1);
   group.add(armPadRWire);
+
+  // The chair is a fully static prop: bake its ~95 parts down to one draw
+  // call per unique material/line style.
+  mergeStaticMeshes(group, { name: "chair" });
 
   return group;
 }

@@ -1,6 +1,8 @@
 import * as THREE from "three";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { WorkstationTheme, DEFAULT_THEME } from "@/lib/theme-colors";
 import { TerminalFont, DEFAULT_TERMINAL_FONT, TERMINAL_FONTS } from "@/lib/terminal-fonts";
+import { mergeStaticMeshes } from "../utils/merge-static";
 
 /**
  * High-Resolution Procedural TUF Gaming F15 (FX506HC) Lid Back Texture
@@ -224,35 +226,36 @@ function createTufLidBackTexture(): {
 }
 
 /**
- * High-Performance Procedural Canvas Texture Cache for 3D Keycap Top Faces
+ * High-Performance Shared Keycap Atlas
+ * Every key legend is baked into a single 2048x2048 canvas so the entire
+ * keyboard can be rendered with a handful of draw calls instead of ~700.
  */
-const keyTextureCache = new Map<string, THREE.CanvasTexture>();
+const KEY_CELL_SIZE = 128;
+const KEY_ATLAS_COLS = 16;
+const KEY_ATLAS_ROWS = 16;
 
-function createKeyTopTexture(
+interface KeyAtlasEntry {
+  u0: number;
+  v0: number;
+  uSize: number;
+  vSize: number;
+}
+
+interface KeyAtlas {
+  texture: THREE.CanvasTexture;
+  entries: Map<string, KeyAtlasEntry>;
+}
+
+function paintKeyCell(
+  ctx: CanvasRenderingContext2D,
   label: string,
-  subLabel: string = "",
-  isWASD: boolean = false,
-  isSpecial: boolean = false
-): THREE.CanvasTexture {
-  const cacheKey = `${label}|${subLabel}|${isWASD}|${isSpecial}`;
-  const existing = keyTextureCache.get(cacheKey);
-  if (existing) return existing;
-
-  const canvas = document.createElement("canvas");
-  canvas.width = 128;
-  canvas.height = 128;
-  const ctx = canvas.getContext("2d");
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-
-  if (!ctx) return texture;
-
+  subLabel: string,
+  isWASD: boolean
+) {
   if (isWASD) {
     // Frosted Translucent WASD Top
     ctx.fillStyle = "#ecfdf5";
-    ctx.fillRect(0, 0, 128, 128);
+    ctx.fillRect(0, 0, KEY_CELL_SIZE, KEY_CELL_SIZE);
 
     ctx.strokeStyle = "#ffffff";
     ctx.lineWidth = 5;
@@ -269,57 +272,101 @@ function createKeyTopTexture(
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(label, 64, 67);
-  } else {
-    // Dark Matte Chiclet Top with High-Contrast White Legend
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, 128, 128);
-
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
-    ctx.lineWidth = 4;
-    ctx.strokeRect(3, 3, 122, 122);
-
-    // Caps Lock Status LED indicator square on the right side
-    if (label.includes("CAPS")) {
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(106, 58, 12, 12);
-    }
-
-    ctx.fillStyle = "#ffffff";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    if (subLabel) {
-      ctx.font = "bold 22px monospace";
-      ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-      ctx.fillText(subLabel, 64, 38);
-
-      ctx.font = "bold 31px monospace";
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText(label, 64, 84);
-    } else {
-      ctx.font =
-        label.length > 6
-          ? "bold 18px monospace"
-          : label.length > 4
-          ? "bold 22px monospace"
-          : label.length > 2
-          ? "bold 28px monospace"
-          : label.length > 1
-          ? "bold 34px monospace"
-          : "bold 48px monospace";
-      ctx.fillText(label, 64, 64);
-    }
-
-    // Tactile homing notch underline on F, J, and Numpad 5
-    if (label === "F" || label === "J" || (label === "5" && !subLabel)) {
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(44, 102, 40, 5);
-    }
+    return;
   }
 
+  // Dark Matte Chiclet Top with High-Contrast White Legend
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, KEY_CELL_SIZE, KEY_CELL_SIZE);
+
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(3, 3, 122, 122);
+
+  // Caps Lock Status LED indicator square on the right side
+  if (label.includes("CAPS")) {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(106, 58, 12, 12);
+  }
+
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  if (subLabel) {
+    ctx.font = "bold 22px monospace";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+    ctx.fillText(subLabel, 64, 38);
+
+    ctx.font = "bold 31px monospace";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(label, 64, 84);
+  } else {
+    ctx.font =
+      label.length > 6
+        ? "bold 18px monospace"
+        : label.length > 4
+        ? "bold 22px monospace"
+        : label.length > 2
+        ? "bold 28px monospace"
+        : label.length > 1
+        ? "bold 34px monospace"
+        : "bold 48px monospace";
+    ctx.fillText(label, 64, 64);
+  }
+
+  // Tactile homing notch underline on F, J, and Numpad 5
+  if (label === "F" || label === "J" || (label === "5" && !subLabel)) {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(44, 102, 40, 5);
+  }
+}
+
+function createKeyTopAtlas(
+  keys: { label: string; sub?: string; isWASD?: boolean }[]
+): KeyAtlas {
+  const canvas = document.createElement("canvas");
+  canvas.width = KEY_CELL_SIZE * KEY_ATLAS_COLS;
+  canvas.height = KEY_CELL_SIZE * KEY_ATLAS_ROWS;
+  const ctx = canvas.getContext("2d");
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+
+  const entries = new Map<string, KeyAtlasEntry>();
+  if (!ctx) return { texture, entries };
+
+  const uSize = 1 / KEY_ATLAS_COLS;
+  const vSize = 1 / KEY_ATLAS_ROWS;
+  let cellIndex = 0;
+
+  keys.forEach((key) => {
+    const cacheKey = `${key.label}|${key.sub ?? ""}|${key.isWASD ? 1 : 0}`;
+    if (entries.has(cacheKey)) return;
+
+    const col = cellIndex % KEY_ATLAS_COLS;
+    const row = Math.floor(cellIndex / KEY_ATLAS_COLS);
+    if (row >= KEY_ATLAS_ROWS) return;
+
+    ctx.save();
+    ctx.translate(col * KEY_CELL_SIZE, row * KEY_CELL_SIZE);
+    paintKeyCell(ctx, key.label, key.sub ?? "", Boolean(key.isWASD));
+    ctx.restore();
+
+    entries.set(cacheKey, {
+      u0: col * uSize,
+      // Canvas y grows downwards while WebGL v grows upwards.
+      v0: 1 - (row + 1) * vSize,
+      uSize,
+      vSize,
+    });
+    cellIndex++;
+  });
+
   texture.needsUpdate = true;
-  keyTextureCache.set(cacheKey, texture);
-  return texture;
+  return { texture, entries };
 }
 
 /**
@@ -911,44 +958,100 @@ export function createLaptopMesh(): {
     { x: 1.44, z: 0.02, w: 0.16, d: 0.165, label: ".", sub: "DEL" },
   ];
 
-  // Render all standard 3D physical keys
+  // Render all standard 3D physical keys as merged batches.
+  // Total draw calls for the ~100-key deck: standard bodies, WASD bodies,
+  // standard legends, WASD legends, and a single merged wireframe.
   const keyHeight = 0.024;
   const keyY = 0.154;
-  const keycapMaterials: THREE.MeshBasicMaterial[] = [];
+
+  const keyAtlas = createKeyTopAtlas(
+    keys3D.map((k) => ({ label: k.label, sub: k.sub, isWASD: k.isWASD }))
+  );
+
+  const standardBodies: THREE.BufferGeometry[] = [];
+  const wasdBodies: THREE.BufferGeometry[] = [];
+  const standardTops: THREE.BufferGeometry[] = [];
+  const wasdTops: THREE.BufferGeometry[] = [];
 
   keys3D.forEach((k) => {
-    const kGeo = new THREE.BoxGeometry(k.w, keyHeight, k.d);
-    const topTex = createKeyTopTexture(k.label, k.sub, k.isWASD, k.isSpecial);
-    const topMat = new THREE.MeshBasicMaterial({
-      map: topTex,
-      color: k.isWASD ? 0xffffff : DEFAULT_THEME.threeColor,
-      toneMapped: false,
-    });
-    if (!k.isWASD) {
-      keycapMaterials.push(topMat);
+    const bodyGeo = new THREE.BoxGeometry(k.w, keyHeight, k.d);
+    bodyGeo.translate(k.x, keyY, k.z);
+    (k.isWASD ? wasdBodies : standardBodies).push(bodyGeo);
+
+    const entry = keyAtlas.entries.get(
+      `${k.label}|${k.sub ?? ""}|${k.isWASD ? 1 : 0}`
+    );
+    if (!entry) return;
+
+    // Thin legend plane hovering just above the keycap body.
+    const topGeo = new THREE.PlaneGeometry(k.w, k.d);
+    topGeo.rotateX(-Math.PI / 2);
+
+    const uv = topGeo.getAttribute("uv") as THREE.BufferAttribute;
+    for (let i = 0; i < uv.count; i++) {
+      uv.setXY(
+        i,
+        entry.u0 + uv.getX(i) * entry.uSize,
+        entry.v0 + uv.getY(i) * entry.vSize
+      );
     }
-    const sideM = k.isWASD ? wasdSideMat : keySideMat;
+    uv.needsUpdate = true;
 
-    const kMaterials = [
-      sideM, // right (+X)
-      sideM, // left (-X)
-      topMat, // top (+Y face with laser-etched legend)
-      sideM, // bottom (-Y)
-      sideM, // front (+Z)
-      sideM, // back (-Z)
-    ];
-
-    const kMesh = new THREE.Mesh(kGeo, kMaterials);
-    kMesh.position.set(k.x, keyY, k.z);
-    kMesh.castShadow = true;
-    kMesh.receiveShadow = true;
-    group.add(kMesh);
-
-    // 3D Keycap Wireframe Bevel Outlines
-    const kWire = new THREE.LineSegments(new THREE.EdgesGeometry(kGeo), wireMat);
-    kWire.position.set(k.x, keyY, k.z);
-    group.add(kWire);
+    topGeo.translate(k.x, keyY + keyHeight / 2 + 0.0004, k.z);
+    (k.isWASD ? wasdTops : standardTops).push(topGeo);
   });
+
+  const standardBodyGeo = mergeGeometries(standardBodies, false);
+  const wasdBodyGeo = mergeGeometries(wasdBodies, false);
+  const standardTopGeo = mergeGeometries(standardTops, false);
+  const wasdTopGeo = mergeGeometries(wasdTops, false);
+
+  const standardTopMat = new THREE.MeshBasicMaterial({
+    map: keyAtlas.texture,
+    color: DEFAULT_THEME.threeColor,
+    toneMapped: false,
+  });
+  const wasdTopMat = new THREE.MeshBasicMaterial({
+    map: keyAtlas.texture,
+    color: 0xffffff,
+    toneMapped: false,
+  });
+
+  if (standardBodyGeo) {
+    const mesh = new THREE.Mesh(standardBodyGeo, keySideMat);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    group.add(mesh);
+  }
+  if (wasdBodyGeo) {
+    const mesh = new THREE.Mesh(wasdBodyGeo, wasdSideMat);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    group.add(mesh);
+  }
+  if (standardTopGeo) {
+    const mesh = new THREE.Mesh(standardTopGeo, standardTopMat);
+    group.add(mesh);
+  }
+  if (wasdTopGeo) {
+    const mesh = new THREE.Mesh(wasdTopGeo, wasdTopMat);
+    group.add(mesh);
+  }
+
+  // One merged wireframe for every keycap (was ~100 separate LineSegments).
+  const allKeyGeos = [...standardBodies, ...wasdBodies];
+  const mergedKeyGeo = mergeGeometries(allKeyGeos, false);
+  if (mergedKeyGeo) {
+    const mergedKeyWire = new THREE.LineSegments(
+      new THREE.EdgesGeometry(mergedKeyGeo),
+      wireMat
+    );
+    group.add(mergedKeyWire);
+    mergedKeyGeo.dispose();
+  }
+  [...standardBodies, ...wasdBodies, ...standardTops, ...wasdTops].forEach((g) =>
+    g.dispose()
+  );
 
   // ---------------- UNIQUE 3D SCULPTED ASUS TUF SPACEBAR ----------------
   // Distinct ASUS TUF spacebar profile with thumb extension & bottom-left 45° chamfer
@@ -1459,11 +1562,15 @@ export function createLaptopMesh(): {
   bumperR.position.set(1.0, 2.68, 0.050);
   lidPivot.add(bumperR);
 
+  // Collapse the chassis, ports, deck and lid into one submission per
+  // material; only the multi-material power/touchpad faces stay separate.
+  mergeStaticMeshes(group, { name: "laptop" });
+
   return {
     group,
     updateScreenTexture: renderScreen,
     setTheme: (theme: WorkstationTheme) => {
-      keycapMaterials.forEach((mat) => mat.color.setHex(theme.threeColor));
+      standardTopMat.color.setHex(theme.threeColor);
       touchFaceMat.color.setHex(theme.threeColor);
       pwrButton.topMat.color.setHex(theme.threeColor);
       wireMat.color.setHex(theme.threeColor);
