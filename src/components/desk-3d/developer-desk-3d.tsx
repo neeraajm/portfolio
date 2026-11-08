@@ -1022,94 +1022,27 @@ export function DeveloperDesk3D() {
       {/* 🎯 FUTURISTIC PRECISION HUD CUSTOM CURSOR */}
       <CustomCursor themeHex={activeTheme.hex} />
 
-      {/* 🟢 ATMOSPHERIC CYBERPUNK SCENE LOADER & BLUR TRANSITION */}
+      {/* 🟢 BUTTERY SMOOTH 144 FPS FROSTED VEIL (Hardware Compositor Fade) */}
       <AnimatePresence>
         {!isSceneReady && (
           <motion.div
-            key="scene-loader"
+            key="scene-veil"
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0, filter: "blur(20px)", scale: 1.03 }}
-            transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-50 bg-[#04070b] flex flex-col items-center justify-center pointer-events-none select-none overflow-hidden"
-          >
-            {/* Background Cyber Glow */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: `radial-gradient(circle at 50% 45%, ${activeTheme.hex}18 0%, rgba(3,6,10,0.95) 70%, #020407 100%)`,
-              }}
-            />
-            {/* CRT Grid lines */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0)_50%,rgba(0,0,0,0.6)_50%)] bg-[length:100%_4px] pointer-events-none opacity-40" />
-
-            <div className="relative z-10 flex flex-col items-center gap-4 text-center px-4 max-w-sm">
-              {/* Glowing Pulse Glyph */}
-              <motion.div
-                animate={{ scale: [0.96, 1.04, 0.96], rotate: [0, 90, 180, 270, 360] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="w-16 h-16 rounded-2xl border-2 flex items-center justify-center relative"
-                style={{
-                  borderColor: activeTheme.hex,
-                  boxShadow: `0 0 30px ${activeTheme.hex}40, inset 0 0 15px ${activeTheme.hex}20`,
-                }}
-              >
-                <div
-                  className="w-7 h-7 rounded-lg border flex items-center justify-center font-bold text-xs"
-                  style={{ borderColor: `${activeTheme.hex}88`, color: activeTheme.hex }}
-                >
-                  0x
-                </div>
-              </motion.div>
-
-              {/* Title & Telemetry */}
-              <div className="space-y-1">
-                <div className="font-bold text-sm tracking-wider text-white">
-                  NEERAJ_OS // 3D WORKSTATION
-                </div>
-                <div
-                  className="text-[11px] font-mono tracking-widest uppercase flex items-center justify-center gap-1.5"
-                  style={{ color: activeTheme.hex }}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full animate-ping" style={{ backgroundColor: activeTheme.hex }} />
-                  <span>INITIALIZING SPATIAL ENGINE...</span>
-                </div>
-              </div>
-
-              {/* Loading Bar */}
-              <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden mt-1">
-                <motion.div
-                  initial={{ width: "0%" }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut" }}
-                  className="h-full rounded-full"
-                  style={{
-                    backgroundColor: activeTheme.hex,
-                    boxShadow: `0 0 10px ${activeTheme.hex}`,
-                  }}
-                />
-              </div>
-
-              <div className="text-[9px] text-neutral-500 font-mono">
-                COMPILING OPTICAL DEPTH BUFFERS & SHADERS
-              </div>
-            </div>
-          </motion.div>
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xl pointer-events-none"
+          />
         )}
       </AnimatePresence>
 
       {/* 🟢 FULL VIEWPORT 3D WEBGL WORKSTATION SCENE */}
       <motion.div
-        initial={{ filter: "blur(20px)", scale: 0.98, opacity: 0.6 }}
+        initial={{ scale: 0.985, opacity: 0.85 }}
         animate={{
-          // Apply the filter only during the entrance transition. A permanent
-          // (even zero-radius) blur/brightness filter forces the browser to
-          // composite the whole WebGL canvas through an offscreen pass.
-          filter: isSceneReady ? "none" : "blur(20px) brightness(0.8)",
-          scale: isSceneReady ? 1 : 0.98,
+          scale: isSceneReady ? 1 : 0.985,
           opacity: 1,
         }}
-        transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
         className={`w-full h-full relative ${
           isBlurred ? "pointer-events-none" : ""
         }`}

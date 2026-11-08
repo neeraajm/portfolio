@@ -31,7 +31,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://neerajm.pages.dev"),
-  title: "Neeraj M // Solo Builder & Systems Engineer",
+  title: "Neeraj M",
   description:
     `Personal developer portfolio of Neeraj M (${DEVELOPER_PROFILE.age}yo Solo Builder & Systems Engineer). Creator of KTCC Platform, Next.js 15, Android Hybrid Engines, and $0 Cloud Infrastructure.`,
   keywords: [
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Neeraj M", url: "https://neerajm.pages.dev" }],
   creator: "Neeraj M",
   openGraph: {
-    title: "Neeraj M // Solo Builder & Systems Engineer",
+    title: "Neeraj M",
     description:
       "Architecting Production Platforms from Scratch. Full-Stack Android & Cloud Platforms with $0 Infrastructure.",
     url: "https://neerajm.pages.dev",
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Neeraj M // Solo Builder & Systems Engineer",
+    title: "Neeraj M",
     description:
       "Building Production Platforms from Scratch. $0 Cloud Infrastructure Specialist.",
     creator: "@neeraajm",

@@ -926,6 +926,16 @@ export function SceneCanvas({
       }
     };
 
+    // Pre-warm and compile all WebGL shader programs before starting render loop
+    // to eliminate frame-one shader compilation stutter
+    if (renderer) {
+      try {
+        renderer.compile(scene, camera);
+      } catch {
+        // Safe fallback
+      }
+    }
+
     animate(performance.now());
 
     // 9b. DEV-ONLY RENDER DIAGNOSTICS (synchronous, GPU-synced benchmark)
