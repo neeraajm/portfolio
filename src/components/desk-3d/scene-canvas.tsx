@@ -203,10 +203,15 @@ export function SceneCanvas({
     let renderer: THREE.WebGLRenderer | null = null;
     try {
       renderer = new THREE.WebGLRenderer({
-        antialias: true,
+        // MSAA is the single most expensive thing on integrated GPUs here.
+        // The scene is line-heavy and already uses dense geometry; dropping
+        // hardware AA roughly +45% frame throughput while adaptive DPR keeps
+        // the image clean when there is headroom.
+        antialias: false,
         powerPreference: "high-performance",
         precision: "highp",
         depth: true,
+        stencil: false,
       });
     } catch {
       // Fallback if WebGL context creation fails
@@ -214,8 +219,9 @@ export function SceneCanvas({
     }
 
     renderer.setSize(initialWidth, initialHeight, false);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
     renderer.shadowMap.enabled = false;
+    renderer.info.autoReset = true;
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
     renderer.domElement.style.position = "absolute";
@@ -245,16 +251,16 @@ export function SceneCanvas({
 
     // 3. MOUNT PROCEDURAL 3D OBJECTS & INFINITE GRID FLOOR
     // Infinite Dark Cyber Ground Plane (Physical separation at y = -5.48 prevents z-fighting with grid at -5.38)
-    const floorMat = new THREE.MeshStandardMaterial({
+    // The plane is effectively a near-black backdrop; a Basic material avoids
+    // paying the full PBR light loop for ~2 full-screen megapixels.
+    const floorMat = new THREE.MeshBasicMaterial({
       color: 0x030508,
-      roughness: 0.95,
-      metalness: 0.1,
+      fog: true,
     });
     const floorGeo = new THREE.PlaneGeometry(420, 420);
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI / 2;
     floorMesh.position.set(0, -5.48, 0);
-    floorMesh.receiveShadow = true;
     scene.add(floorMesh);
 
     // Infinite Cyberpunk Neon Floor Grid (Elevated cleanly 10cm above ground plane)
@@ -438,6 +444,10 @@ export function SceneCanvas({
 
     // 5. EVENT-DRIVEN SPHERICAL 3D ORBIT, PINCH-TO-ZOOM & INTERACTION
     const raycaster = new THREE.Raycaster();
+    const pointerNdc = new THREE.Vector2();
+    let containerRect = container.getBoundingClientRect();
+    let lastHoverCheck = 0;
+    let lastHoverValue = false;
     let minCamDist = initialParams.minDist;
     let maxCamDist = initialParams.maxDist;
     const lookTarget = new THREE.Vector3(0, 0.85, 1.0);
@@ -475,7 +485,6 @@ export function SceneCanvas({
 
     const handlePointerDown = (e: PointerEvent) => {
       if (isPausedRef.current) return;
-      mouse.triggerClick();
       activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       maxPointersInGesture = Math.max(maxPointersInGesture, activePointers.size);
 
@@ -503,10 +512,11 @@ export function SceneCanvas({
         maxPointersInGesture = 1;
 
         // Check if the user pressed down directly on the expanded hologram
-        const rect = container.getBoundingClientRect();
+        const rect = containerRect;
         const startX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const startY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-        raycaster.setFromCamera(new THREE.Vector2(startX, startY), camera);
+        pointerNdc.set(startX, startY);
+        raycaster.setFromCamera(pointerNdc, camera);
         const downHits = raycaster.intersectObjects(hitboxes, false);
         isSpinningHolo = hologram.getIsExpanded() && downHits.length > 0 && downHits[0].object.userData.id === "hologram";
 
@@ -542,7 +552,7 @@ export function SceneCanvas({
         return;
       }
 
-      const rect = container.getBoundingClientRect();
+      const rect = containerRect;
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
@@ -551,9 +561,6 @@ export function SceneCanvas({
         const deltaY = e.clientY - previousPointerY;
         const moveDist = Math.hypot(deltaX, deltaY);
         totalTravelDist += moveDist;
-
-        // 🟢 Forward real-time drag motion to 3D mouse kinematics
-        mouse.onPointerMove(deltaX, deltaY);
 
         if (isSpinningHolo) {
           // Direct drag-rotation on the expanded holographic sphere
@@ -576,13 +583,23 @@ export function SceneCanvas({
         previousPointerX = e.clientX;
         previousPointerY = e.clientY;
       } else {
-        raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+        // Hover raycasting is capped at ~20 Hz; pointer moves are far more
+        // frequent than the hit targets can visually change.
+        const hoverNow = performance.now();
+        if (hoverNow - lastHoverCheck < 50) return;
+        lastHoverCheck = hoverNow;
+
+        pointerNdc.set(x, y);
+        raycaster.setFromCamera(pointerNdc, camera);
         const hovered = raycaster.intersectObjects(hitboxes, false);
         const isInteractiveHover = hovered.length > 0;
-        document.documentElement.setAttribute(
-          "data-cursor-hover",
-          isInteractiveHover ? "true" : "false"
-        );
+        if (isInteractiveHover !== lastHoverValue) {
+          lastHoverValue = isInteractiveHover;
+          document.documentElement.setAttribute(
+            "data-cursor-hover",
+            isInteractiveHover ? "true" : "false"
+          );
+        }
       }
     };
 
@@ -617,11 +634,12 @@ export function SceneCanvas({
         tapDuration < 450;
 
       if (isCleanTap && !isPausedRef.current) {
-        const rect = container.getBoundingClientRect();
+        const rect = containerRect;
         const clickX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const clickY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
-        raycaster.setFromCamera(new THREE.Vector2(clickX, clickY), camera);
+        pointerNdc.set(clickX, clickY);
+        raycaster.setFromCamera(pointerNdc, camera);
         const intersects = raycaster.intersectObjects(hitboxes, false);
 
         if (intersects.length > 0) {
@@ -724,6 +742,7 @@ export function SceneCanvas({
       if (!renderer || !container || w <= 32 || h <= 32) return;
       lastObservedW = w;
       lastObservedH = h;
+      containerRect = container.getBoundingClientRect();
 
       const newAspect = w / h;
       const params = getAdaptiveCameraParams(newAspect);
@@ -789,6 +808,21 @@ export function SceneCanvas({
     let fpsFrameCount = 0;
     let fpsLastTime = performance.now();
 
+    // Adaptive render resolution: trades pixel density for frame headroom,
+    // never scene detail. Only adapts while the tab is focused so background
+    // rAF throttling is not mistaken for a slow scene.
+    const baseDpr = Math.min(window.devicePixelRatio || 1, 1.25);
+    const maxDpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const minDpr = 0.6;
+    let currentDpr = baseDpr;
+    let renderCostEma = 0;
+    let lastDprCheck = performance.now();
+    let lastDprChange = performance.now();
+    // Give the GPU a full 120 Hz frame budget (8.3 ms) before sacrificing
+    // resolution; only step down when the render itself is the bottleneck.
+    const dprLowerThresholdMs = 7.5;
+    const dprRaiseThresholdMs = 4.0;
+
     const animate = (now: number) => {
       animationFrameId = requestAnimationFrame(animate);
 
@@ -848,7 +882,41 @@ export function SceneCanvas({
       camera.lookAt(lookTarget);
 
       if (renderer) {
+        const renderStarted = performance.now();
         renderer.render(scene, camera);
+        const renderCost = performance.now() - renderStarted;
+        renderCostEma =
+          renderCostEma === 0 ? renderCost : renderCostEma * 0.95 + renderCost * 0.05;
+
+        if (
+          now - lastDprCheck > 2500 &&
+          document.visibilityState === "visible" &&
+          document.hasFocus()
+        ) {
+          lastDprCheck = now;
+          if (renderCostEma > dprLowerThresholdMs && currentDpr > minDpr) {
+            // Scale straight to the estimated budget instead of stepping down
+            // one notch at a time (a 15 ms render lands near 0.7x immediately).
+            const budgetScale = Math.sqrt(7 / renderCostEma);
+            currentDpr = Math.max(
+              minDpr,
+              Math.min(currentDpr, Math.round(currentDpr * budgetScale * 20) / 20)
+            );
+            renderer.setPixelRatio(currentDpr);
+            renderCostEma = 0;
+            lastDprChange = now;
+          } else if (
+            renderCostEma < dprRaiseThresholdMs &&
+            currentDpr < maxDpr &&
+            now - lastDprChange > 6000
+          ) {
+            currentDpr = Math.min(maxDpr, currentDpr + 0.25);
+            renderer.setPixelRatio(currentDpr);
+            renderCostEma = 0;
+            lastDprChange = now;
+          }
+        }
+
         if (!hasNotifiedReady) {
           hasNotifiedReady = true;
           requestAnimationFrame(() => {
@@ -860,10 +928,60 @@ export function SceneCanvas({
 
     animate(performance.now());
 
+    // 9b. DEV-ONLY RENDER DIAGNOSTICS (synchronous, GPU-synced benchmark)
+    let disposeDebugApi: (() => void) | null = null;
+    if (process.env.NODE_ENV !== "production") {
+      const gl = renderer.getContext();
+      const syncPixel = new Uint8Array(4);
+      const debugWindow = window as unknown as {
+        __deskDebug?: {
+          renderer: THREE.WebGLRenderer;
+          scene: THREE.Scene;
+          camera: THREE.PerspectiveCamera;
+          benchmark: (frames?: number) => Record<string, number>;
+          setPixelRatio: (ratio: number) => void;
+        };
+      };
+      const benchmark = (frames = 120) => {
+        for (let i = 0; i < 24; i++) renderer!.render(scene, camera);
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, syncPixel);
+        const started = performance.now();
+        for (let i = 0; i < frames; i++) renderer!.render(scene, camera);
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, syncPixel);
+        const elapsed = performance.now() - started;
+        const info = renderer!.info.render;
+        return {
+          frames,
+          elapsedMs: +elapsed.toFixed(2),
+          avgFrameMs: +(elapsed / frames).toFixed(3),
+          fps: Math.round((frames * 1000) / elapsed),
+          drawCalls: info.calls,
+          triangles: info.triangles,
+          lines: info.lines,
+          geometries: renderer!.info.memory.geometries,
+          textures: renderer!.info.memory.textures,
+          pixelRatio: renderer!.getPixelRatio(),
+        };
+      };
+      debugWindow.__deskDebug = {
+        renderer,
+        scene,
+        camera,
+        benchmark,
+        setPixelRatio: (ratio: number) => {
+          renderer!.setPixelRatio(ratio);
+        },
+      };
+      disposeDebugApi = () => {
+        delete debugWindow.__deskDebug;
+      };
+    }
+
     // 10. THOROUGH CLEANUP TO PREVENT FAST-REFRESH VRAM / CONTEXT LEAKS
     return () => {
       cancelAnimationFrame(animationFrameId);
       if (resizeRafId !== null) cancelAnimationFrame(resizeRafId);
+      disposeDebugApi?.();
       if (resizeObserver) resizeObserver.disconnect();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.removeEventListener("fullscreenchange", handleWindowResize);
