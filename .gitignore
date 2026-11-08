@@ -52,3 +52,7 @@ content/
 
 # playwright mcp
 .playwright-mcp/
+
+# design references
+icons/
+
