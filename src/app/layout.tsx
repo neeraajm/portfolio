@@ -75,7 +75,12 @@ export const metadata: Metadata = {
     images: ["/avatar-neeraj.png"],
   },
   icons: {
-    icon: "/avatar-neeraj.png",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "32x32" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
   },
 };
 

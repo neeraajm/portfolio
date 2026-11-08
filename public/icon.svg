@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="0" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#090d16" />
+      <stop offset="100%" stop-color="#04060a" />
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="32" height="32" rx="7" fill="url(#bg-grad)" />
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="#1e293b" stroke-width="1" />
+  
+  <!-- PixL Terminal Chevron (>) -->
+  <rect x="5" y="8" width="3" height="2" fill="#ffffff" />
+  <rect x="7" y="10" width="3" height="2" fill="#ffffff" />
+  <rect x="9" y="12" width="3" height="2" fill="#ffffff" />
+  <rect x="11" y="14" width="3" height="4" fill="#ffffff" />
+  <rect x="9" y="18" width="3" height="2" fill="#ffffff" />
+  <rect x="7" y="20" width="3" height="2" fill="#ffffff" />
+  <rect x="5" y="22" width="3" height="2" fill="#ffffff" />
+
+  <!-- PixL Terminal Underline Cursor (_) in Cyber Cyan -->
+  <rect x="16" y="20" width="10" height="4" fill="#00f0ff" rx="1" />
+</svg>
