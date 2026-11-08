@@ -32,11 +32,19 @@ export function createRouterMesh(): {
   routerHitbox.userData = { id: "router", interactive: true };
   group.add(routerHitbox);
 
-  // 3. DYNAMIC EMISSIVE CANVAS TEXTURE (1024x1024)
+  // 3. DYNAMIC EMISSIVE CANVAS TEXTURE (512x512, patch-only updates)
+  // Drawn in 1024-space coordinates with a 0.5 transform so existing patch
+  // geometry is preserved at half the texel cost.
+  const EMISSIVE_SIZE = 512;
   const emissiveCanvas = document.createElement("canvas");
-  emissiveCanvas.width = 1024;
-  emissiveCanvas.height = 1024;
+  emissiveCanvas.width = EMISSIVE_SIZE;
+  emissiveCanvas.height = EMISSIVE_SIZE;
   const eCtx = emissiveCanvas.getContext("2d");
+  if (eCtx) {
+    eCtx.setTransform(EMISSIVE_SIZE / 1024, 0, 0, EMISSIVE_SIZE / 1024, 0, 0);
+    eCtx.fillStyle = "#000000";
+    eCtx.fillRect(0, 0, 1024, 1024);
+  }
 
   const dynamicEmissiveTexture = new THREE.CanvasTexture(emissiveCanvas);
   dynamicEmissiveTexture.flipY = false;
@@ -126,6 +134,9 @@ export function createRouterMesh(): {
       });
 
       modelContainer.add(routerScene);
+      // Static LED patches now have access to the source emissive image.
+      renderStaticPatches();
+      renderDynamicPatches();
     },
     undefined,
     (err) => console.warn("Could not load /models/router.glb:", err)
@@ -133,32 +144,31 @@ export function createRouterMesh(): {
 
   // 4. ANIMATE INDEPENDENT TEXTURE PATCHES DIRECTLY ON THE ROUTER'S MATERIAL
   let time = 0;
-  const updateRouter = (delta: number) => {
-    time += delta;
+  let textureAccumulator = 0;
+
+  const paintPatch = (
+    p: { x: number; y: number; w: number; h: number },
+    alpha: number
+  ) => {
     if (!eCtx) return;
+    eCtx.save();
+    eCtx.globalAlpha = alpha;
+    eCtx.clearRect(p.x, p.y, p.w, p.h);
+    if (sourceEmissiveImg) {
+      eCtx.drawImage(sourceEmissiveImg, p.x, p.y, p.w, p.h, p.x, p.y, p.w, p.h);
+    } else {
+      eCtx.fillStyle = currentThemeHex;
+      eCtx.fillRect(p.x, p.y, p.w, p.h);
+    }
+    eCtx.restore();
+  };
 
-    // Clear emissive canvas with total black (unlit state)
-    eCtx.fillStyle = "#000000";
-    eCtx.fillRect(0, 0, 1024, 1024);
+  const renderStaticPatches = () => {
+    staticPatches.forEach((p) => paintPatch(p, 1.0));
+    dynamicEmissiveTexture.needsUpdate = true;
+  };
 
-    // 1. First 4 lights from the left: ALWAYS STATIC ON (Solid 100% full brightness)
-    staticPatches.forEach((p) => {
-      eCtx.save();
-      eCtx.globalAlpha = 1.0;
-      if (sourceEmissiveImg) {
-        eCtx.drawImage(
-          sourceEmissiveImg,
-          p.x, p.y, p.w, p.h,
-          p.x, p.y, p.w, p.h
-        );
-      } else {
-        eCtx.fillStyle = currentThemeHex;
-        eCtx.fillRect(p.x, p.y, p.w, p.h);
-      }
-      eCtx.restore();
-    });
-
-    // 2. Remaining active lights on the right: Dynamic network packet activity
+  const renderDynamicPatches = () => {
     const lanBurst = (Math.sin(time * 4.6) > -0.6) ? (Math.sin(time * 26.0) > 0.0 ? 1.0 : 0.12) : 0.18;
     const wifiShimmer = 0.35 + Math.sin(time * 16.5) * 0.65;
     const pingCycle = (time * 1.6) % 3.0;
@@ -170,24 +180,28 @@ export function createRouterMesh(): {
       else if (p.type === "wifi_pulse") a = wifiShimmer;
       else if (p.type === "probe_ping") a = probePing;
 
-      if (a > 0.05) {
-        eCtx.save();
-        eCtx.globalAlpha = a;
-        if (sourceEmissiveImg) {
-          eCtx.drawImage(
-            sourceEmissiveImg,
-            p.x, p.y, p.w, p.h,
-            p.x, p.y, p.w, p.h
-          );
-        } else {
-          eCtx.fillStyle = currentThemeHex;
-          eCtx.fillRect(p.x, p.y, p.w, p.h);
-        }
-        eCtx.restore();
-      }
+      // Repaint every dynamic patch (clearing stale brightness) but only
+      // touch the small patch rectangles instead of the full canvas.
+      paintPatch(p, Math.max(0, Math.min(1, a)));
     });
 
     dynamicEmissiveTexture.needsUpdate = true;
+  };
+
+  renderStaticPatches();
+  renderDynamicPatches();
+
+  const updateRouter = (delta: number) => {
+    time += delta;
+    if (!eCtx) return;
+
+    // LEDs do not need per-frame texture uploads: ~20 Hz is visually smooth
+    // while cutting canvas work and GPU uploads by an order of magnitude.
+    textureAccumulator += delta;
+    if (textureAccumulator < 0.05) return;
+    textureAccumulator = 0;
+
+    renderDynamicPatches();
   };
 
   const setTheme = (theme: WorkstationTheme) => {
@@ -198,6 +212,11 @@ export function createRouterMesh(): {
     wireMaterials.forEach((m) => {
       m.color.setHex(theme.threeColor);
     });
+    // Fallback patches are painted with the raw theme color.
+    if (!sourceEmissiveImg) {
+      renderStaticPatches();
+      renderDynamicPatches();
+    }
   };
 
   return {

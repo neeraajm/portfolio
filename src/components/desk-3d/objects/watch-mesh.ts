@@ -33,11 +33,15 @@ export function createWatchMesh(): {
   watchHitbox.userData = { id: "watch", interactive: true };
   group.add(watchHitbox);
 
-  // 3. DYNAMIC LCD CANVAS TEXTURE (512x512)
+  // 3. DYNAMIC LCD CANVAS TEXTURE (256x256 authored in 512-space)
+  const WATCH_SCALE_TEX = 0.5;
   const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = 512 * WATCH_SCALE_TEX;
+  canvas.height = 512 * WATCH_SCALE_TEX;
   const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.setTransform(WATCH_SCALE_TEX, 0, 0, WATCH_SCALE_TEX, 0, 0);
+  }
 
   // Correct texture orientation: Rotate 90° to the left (counter-clockwise) from previous angle
   const watchTexture = new THREE.CanvasTexture(canvas);
@@ -69,25 +73,17 @@ export function createWatchMesh(): {
       ctx.stroke();
     }
 
-    const now = new Date();
-    const istTimeStr = now.toLocaleTimeString("en-US", {
-      timeZone: "Asia/Kolkata",
-      hour12: false,
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
+    // Manual IST formatting (UTC+5:30) avoids costly Intl lookups every tick
+    const istNow = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
+    const istTimeStr = `${String(istNow.getUTCHours()).padStart(2, "0")}:${String(
+      istNow.getUTCMinutes()
+    ).padStart(2, "0")}:${String(istNow.getUTCSeconds()).padStart(2, "0")}`;
 
-    const dayName = now.toLocaleDateString("en-US", {
-      timeZone: "Asia/Kolkata",
-      weekday: "short",
-    }).toUpperCase();
+    const dayName = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][
+      istNow.getUTCDay()
+    ];
 
-    const monthDay = now.toLocaleDateString("en-US", {
-      timeZone: "Asia/Kolkata",
-      month: "numeric",
-      day: "numeric",
-    });
+    const monthDay = `${istNow.getUTCMonth() + 1}/${istNow.getUTCDate()}`;
 
     // Center all text horizontally inside the circular LCD bezel
     ctx.textAlign = "center";

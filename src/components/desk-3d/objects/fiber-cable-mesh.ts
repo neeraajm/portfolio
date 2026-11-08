@@ -92,8 +92,10 @@ export function createFiberCableMesh(): {
   });
   wireMaterials.push(fiberWireMat);
 
-  const fiberWire = new THREE.LineSegments(
-    new THREE.EdgesGeometry(fiberGeo, 24),
+  const fiberWire = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(
+      curve.getPoints(280).map((p) => p.clone().setY(p.y + fiberRadius * 0.8))
+    ),
     fiberWireMat
   );
   group.add(fiberWire);

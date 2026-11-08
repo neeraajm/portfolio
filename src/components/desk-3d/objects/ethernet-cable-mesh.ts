@@ -93,8 +93,10 @@ export function createEthernetCableMesh(): {
   });
   wireMaterials.push(cableWireMat);
 
-  const cableWire = new THREE.LineSegments(
-    new THREE.EdgesGeometry(cableGeo, 24),
+  const cableWire = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(
+      curve.getPoints(200).map((p) => p.clone().setY(p.y + cableRadius * 0.8))
+    ),
     cableWireMat
   );
   group.add(cableWire);

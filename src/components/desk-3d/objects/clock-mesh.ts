@@ -36,10 +36,16 @@ export function createClockMesh(): {
   group.add(clockHitbox);
 
   // 3. LIVE 7-SEGMENT DYNAMIC CANVAS TEXTURE (Clean - No top/bottom text)
+  // Authored in 1024x512 coordinates but rendered at 512x256 to quarter the
+  // fill cost and texture upload bandwidth.
+  const DISPLAY_SCALE = 0.5;
   const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 512;
+  canvas.width = 1024 * DISPLAY_SCALE;
+  canvas.height = 512 * DISPLAY_SCALE;
   const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.setTransform(DISPLAY_SCALE, 0, 0, DISPLAY_SCALE, 0, 0);
+  }
 
   const displayTexture = new THREE.CanvasTexture(canvas);
   displayTexture.flipY = false;
@@ -226,19 +232,11 @@ export function createClockMesh(): {
       ctx.fillRect(0, y, 1024, 2);
     }
 
-    // Read current live IST time
-    const now = new Date();
-    const istTime24Str = now.toLocaleTimeString("en-US", {
-      timeZone: "Asia/Kolkata",
-      hour12: false,
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-    const parts = istTime24Str.split(":");
-    const rawHours = parseInt(parts[0], 10);
-    const minsStr = parts[1] || "00";
-    const secsStr = parts[2] || "00";
+    // Read current live IST time (UTC+5:30) without Intl formatting overhead
+    const istNow = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
+    const rawHours = istNow.getUTCHours();
+    const minsStr = String(istNow.getUTCMinutes()).padStart(2, "0");
+    const secsStr = String(istNow.getUTCSeconds()).padStart(2, "0");
 
     const isPM = rawHours >= 12;
     let displayHours = rawHours;
@@ -306,6 +304,31 @@ export function createClockMesh(): {
     draw7Segment(ctx, 755, secY, secW, secH, secT, secsStr[0], litColor, unlitColor);
     draw7Segment(ctx, 850, secY, secW, secH, secT, secsStr[1], litColor, unlitColor);
 
+    displayTexture.needsUpdate = true;
+  };
+
+  // Patch-only colon pulse: repaints a tiny window around the two dots so the
+  // display can animate between second ticks without a full 512x256 redraw.
+  const COLON_REGION = { x: 376, y: 190, w: 50, h: 132 };
+  const renderColonPatch = (colonPulseAlpha: number) => {
+    if (!ctx) return;
+    const { x, y, w, h } = COLON_REGION;
+    ctx.clearRect(x, y, w, h);
+    ctx.fillStyle = "#06090e";
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+    for (let sy = Math.ceil(y / 4) * 4; sy < y + h; sy += 4) {
+      ctx.fillRect(x, sy, w, 2);
+    }
+
+    ctx.save();
+    ctx.fillStyle = currentThemeHex;
+    ctx.globalAlpha = Math.max(0.2, colonPulseAlpha);
+    ctx.beginPath();
+    ctx.arc(400, 136 + 240 * 0.33, 15, 0, Math.PI * 2);
+    ctx.arc(400, 136 + 240 * 0.67, 15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
     displayTexture.needsUpdate = true;
   };
 
@@ -505,15 +528,22 @@ export function createClockMesh(): {
   );
 
   // 7. UPDATE TICK & THEME LOGIC
+  let lastColonDraw = 0;
   const updateClock = (delta: number) => {
     pulseTime += delta * 3.5;
     // Smooth sine wave pulse for colon ':'
     const colonAlpha = (Math.sin(pulseTime) + 1.0) / 2.0;
+    lastColonDraw += delta;
 
     const currentSec = new Date().getSeconds();
-    if (currentSec !== lastSecond || Math.abs(colonAlpha - 0.5) > 0.45) {
+    if (currentSec !== lastSecond) {
       lastSecond = currentSec;
+      lastColonDraw = 0;
       renderDisplay(colonAlpha);
+    } else if (lastColonDraw >= 0.12) {
+      // ~8 Hz patch redraw keeps the pulse smooth without full-screen uploads.
+      lastColonDraw = 0;
+      renderColonPatch(colonAlpha);
     }
   };
 

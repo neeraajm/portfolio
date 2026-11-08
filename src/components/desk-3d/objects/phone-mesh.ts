@@ -66,11 +66,9 @@ export function createPhoneMesh(): {
 
   const getLiveTime = () => {
     const now = new Date();
-    return now.toLocaleTimeString("en-US", {
-      hour12: false,
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return `${String(now.getHours()).padStart(2, "0")}:${String(
+      now.getMinutes()
+    ).padStart(2, "0")}`;
   };
 
   const renderPhoneScreen = (
@@ -218,9 +216,14 @@ export function createPhoneMesh(): {
     });
   }
 
-  // Live time updater on table desk phone screen
+  // Live time updater on table desk phone screen: the visible clock only shows
+  // HH:MM, so repaint once per minute instead of every second.
+  let lastRenderedTime = getLiveTime();
   const timeInterval = setInterval(() => {
-    renderPhoneScreen();
+    const nowTime = getLiveTime();
+    if (nowTime === lastRenderedTime) return;
+    lastRenderedTime = nowTime;
+    renderPhoneScreen(currentThemeHex, nowTime);
     screenTexture.needsUpdate = true;
   }, 1000);
 

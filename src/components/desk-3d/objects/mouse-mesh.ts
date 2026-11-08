@@ -338,7 +338,7 @@ export function createMouseMesh(): {
   ];
 
   const cableCurve = new THREE.CatmullRomCurve3(cablePoints, false, "centripetal", 0.45);
-  let cableGeo = new THREE.TubeGeometry(cableCurve, 84, 0.022, 8, false);
+  let cableGeo = new THREE.TubeGeometry(cableCurve, 56, 0.022, 6, false);
 
   const cableMat = new THREE.MeshStandardMaterial({
     color: 0x070a0f,
@@ -350,14 +350,35 @@ export function createMouseMesh(): {
   cableMesh.castShadow = true;
   group.add(cableMesh);
 
-  // Cable TokyoNight Neon Wireframe Accent (Smooth Contour LineSegments)
+  // Cable TokyoNight Neon Centerline Accent (cheap Line instead of EdgesGeometry)
   const cableWireMat = new THREE.LineBasicMaterial({
     color: DEFAULT_THEME.threeColor,
     transparent: true,
     opacity: 0.35,
   });
-  let cableWire = new THREE.LineSegments(new THREE.EdgesGeometry(cableGeo, 24), cableWireMat);
-  group.add(cableWire);
+
+  const CABLE_ACCENT_SEGMENTS = 56;
+  const cableAccentPositions = new Float32Array((CABLE_ACCENT_SEGMENTS + 1) * 3);
+  const cableAccentGeo = new THREE.BufferGeometry();
+  cableAccentGeo.setAttribute(
+    "position",
+    new THREE.BufferAttribute(cableAccentPositions, 3)
+  );
+  const cableAccent = new THREE.Line(cableAccentGeo, cableWireMat);
+  cableAccent.frustumCulled = false;
+  group.add(cableAccent);
+
+  const syncCableAccent = () => {
+    const points = cableCurve.getPoints(CABLE_ACCENT_SEGMENTS);
+    for (let i = 0; i <= CABLE_ACCENT_SEGMENTS; i++) {
+      const p = points[i];
+      cableAccentPositions[i * 3] = p.x;
+      cableAccentPositions[i * 3 + 1] = p.y + 0.023;
+      cableAccentPositions[i * 3 + 2] = p.z;
+    }
+    cableAccentGeo.getAttribute("position").needsUpdate = true;
+  };
+  syncCableAccent();
 
   // 8. ELASTIC BOUNDED MOUSEPAD & CABLE BUNDLE PHYSICS STATE
   let targetOffsetX = 0;
@@ -376,6 +397,7 @@ export function createMouseMesh(): {
   let jiggleTime = 0;
 
   let lastCableSyncDist = 0;
+  let cableRebuildAccumulator = 0;
 
   const onPointerMove = (dx: number, dy: number) => {
     // Physical translation bounds on virtual mousepad
@@ -457,8 +479,14 @@ export function createMouseMesh(): {
     }
 
     // G. Dynamic Full-Chain Cable Flex & Coil Breathing
+    // Rebuilding the tube is expensive, so cap it at ~14 Hz while the line
+    // accent follows the same spline every rebuild.
+    cableRebuildAccumulator += delta;
     const motionDist = Math.hypot(currentOffsetX, currentOffsetZ) + Math.hypot(currentBundleX, currentBundleZ);
-    if (Math.abs(motionDist - lastCableSyncDist) > 0.004 || jiggleAmp > 0.0005) {
+    const cableNeedsSync =
+      Math.abs(motionDist - lastCableSyncDist) > 0.004 || jiggleAmp > 0.0005;
+    if (cableNeedsSync && cableRebuildAccumulator >= 0.07) {
+      cableRebuildAccumulator = 0;
       lastCableSyncDist = motionDist;
 
       const dynamicCableStart = new THREE.Vector3(-0.10, 0.058, -0.47)
@@ -514,14 +542,11 @@ export function createMouseMesh(): {
 
       cableCurve.points = cablePoints;
 
-      // Smooth high-resolution procedural tube (96 segments, 8 radial)
-      const newGeo = new THREE.TubeGeometry(cableCurve, 96, 0.022, 8, false);
+      // Smooth procedural tube (56 segments, 6 radial) + centerline accent
+      const newGeo = new THREE.TubeGeometry(cableCurve, 56, 0.022, 6, false);
       cableMesh.geometry.dispose();
       cableMesh.geometry = newGeo;
-
-      const newWireGeo = new THREE.EdgesGeometry(newGeo, 24);
-      cableWire.geometry.dispose();
-      cableWire.geometry = newWireGeo;
+      syncCableAccent();
     }
   };
 
